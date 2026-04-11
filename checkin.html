@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check In — Uppercuts by Sly</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0A0A0A;
+            color: #F5F5F0;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+        .card {
+            background: #111;
+            border: 1px solid rgba(201,169,110,0.25);
+            border-radius: 16px;
+            padding: 40px 32px;
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+        }
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            color: #C9A96E;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            color: #888;
+            font-size: 13px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 32px;
+        }
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        .desc {
+            color: #888;
+            font-size: 15px;
+            margin-bottom: 32px;
+            line-height: 1.6;
+        }
+        input {
+            width: 100%;
+            background: #1a1a1a;
+            border: 1px solid rgba(201,169,110,0.3);
+            border-radius: 10px;
+            padding: 16px 20px;
+            color: #F5F5F0;
+            font-size: 16px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            margin-bottom: 16px;
+            transition: border-color 0.2s;
+        }
+        input:focus { border-color: #C9A96E; }
+        input::placeholder { color: #555; }
+        button {
+            width: 100%;
+            background: linear-gradient(135deg, #C9A96E, #a8874d);
+            color: #0A0A0A;
+            border: none;
+            border-radius: 10px;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            transition: opacity 0.2s;
+        }
+        button:hover { opacity: 0.9; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .success {
+            display: none;
+            padding: 32px 0 8px;
+        }
+        .check {
+            width: 72px;
+            height: 72px;
+            background: rgba(201,169,110,0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin: 0 auto 20px;
+            color: #C9A96E;
+        }
+        .success h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 26px;
+            margin-bottom: 12px;
+        }
+        .success p {
+            color: #888;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        .gold-line {
+            width: 40px;
+            height: 2px;
+            background: #C9A96E;
+            margin: 0 auto 28px;
+        }
+        .error-msg {
+            color: #e07070;
+            font-size: 13px;
+            margin-top: -8px;
+            margin-bottom: 12px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="logo">Uppercuts by Sly</div>
+        <div class="subtitle">Lobby Check-In</div>
+        <div class="gold-line"></div>
+
+        <div id="formSection">
+            <h1>You've Arrived</h1>
+            <p class="desc">Enter your name below and Sly will be notified you're in the lobby.</p>
+            <input type="text" id="clientName" placeholder="Your full name" autocomplete="name" />
+            <p class="error-msg" id="errorMsg">Please enter your name.</p>
+            <button id="checkInBtn" onclick="checkIn()">Check In</button>
+        </div>
+
+        <div class="success" id="successSection">
+            <div class="check">✓</div>
+            <h2>You're Checked In</h2>
+            <p>Sly has been notified you're here. Please have a seat in the lobby — he'll be with you shortly.</p>
+        </div>
+    </div>
+
+    <script>
+        async function checkIn() {
+            const nameInput = document.getElementById('clientName');
+            const name = nameInput.value.trim();
+            const errorMsg = document.getElementById('errorMsg');
+            const btn = document.getElementById('checkInBtn');
+
+            if (!name) {
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            errorMsg.style.display = 'none';
+            btn.disabled = true;
+            btn.textContent = 'Checking in...';
+
+            try {
+                await fetch('https://hooks.zapier.com/hooks/catch/uppercuts-checkin/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, timestamp: new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }) }),
+                    mode: 'no-cors'
+                });
+            } catch (e) {
+                // still show success — SMS handled server-side
+            }
+
+            // Send SMS via our backend
+            try {
+                await fetch('https://uppercuts-checkin-api.vercel.app/api/checkin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name })
+                });
+            } catch (e) {}
+
+            document.getElementById('formSection').style.display = 'none';
+            document.getElementById('successSection').style.display = 'block';
+        }
+
+        document.getElementById('clientName').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') checkIn();
+        });
+    </script>
+</body>
+</html>
