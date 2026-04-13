@@ -1,0 +1,41 @@
+[build]
+  publish = "."
+  command = "echo 'Static site - no build needed'"
+  functions = "netlify/functions"
+
+[context.production]
+  environment = { TWILIO_ACCOUNT_SID = "ACc61eadec4b30d4072c3525bcbb5b4b97", TWILIO_AUTH_TOKEN = "84472de9154b883d14ec213fd892f858", TWILIO_PHONE = "+18559203566", SLY_PHONE = "+17703340126" }
+
+[[redirects]]
+  from = "/api/sms-command"
+  to = "/.netlify/functions/sms-command"
+  status = 200
+
+[[redirects]]
+  from = "/api/checkin-alert"
+  to = "/.netlify/functions/checkin-alert"
+  status = 200
+
+[[redirects]]
+  from = "/api/send-booking-alert"
+  to = "/.netlify/functions/send-booking-alert"
+  status = 200
+
+[[redirects]]
+  from = "/api/booking-confirmation"
+  to = "/.netlify/functions/booking-confirmation"
+  status = 200
+
+[[redirects]]
+  from = "/api/send-appointment-reminders"
+  to = "/.netlify/functions/send-appointment-reminders"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=()"
