@@ -1263,23 +1263,23 @@
 
                 <!-- Step 1: Select Service -->
                 <div class="step-panel active" id="step1">
-                    <div class="service-option" data-service="Kids Cut (13 & Under)" data-price="25">
+                    <div class="service-option" data-service="Kids Cut (13 & Under)" data-price="25" data-service-id="1">
                         <div class="svc-info"><h4>Kids Cut</h4><span>13 & Under · 45 min</span></div>
                         <span class="svc-price">$25</span>
                     </div>
-                    <div class="service-option" data-service="Teen Cut (14-17)" data-price="30">
+                    <div class="service-option" data-service="Teen Cut (14-17)" data-price="30" data-service-id="2">
                         <div class="svc-info"><h4>Teen Cut</h4><span>14–17 · 45 min</span></div>
                         <span class="svc-price">$30</span>
                     </div>
-                    <div class="service-option" data-service="Premium Cut" data-price="45">
+                    <div class="service-option" data-service="Premium Cut" data-price="45" data-service-id="3">
                         <div class="svc-info"><h4>Premium Cut</h4><span>1 hr</span></div>
                         <span class="svc-price">$45</span>
                     </div>
-                    <div class="service-option" data-service="Signature Cut" data-price="60">
+                    <div class="service-option" data-service="Signature Cut" data-price="60" data-service-id="4">
                         <div class="svc-info"><h4>Signature Cut</h4><span>1 hr 15 min &middot; beard w/ hot oil or dye enhancements</span></div>
                         <span class="svc-price">$60</span>
                     </div>
-                    <div class="service-option" data-service="Beard / Line Up" data-price="30">
+                    <div class="service-option" data-service="Beard / Line Up" data-price="30" data-service-id="5">
                         <div class="svc-info"><h4>Beard / Line Up</h4><span>30 min</span></div>
                         <span class="svc-price">$30</span>
                     </div>
@@ -1655,7 +1655,8 @@
                 selectedService = {
                     name: opt.dataset.service,
                     price: opt.querySelector('.svc-price').textContent,
-                    rawPrice: parseFloat(opt.dataset.price)
+                    rawPrice: parseFloat(opt.dataset.price),
+                    id: parseInt(opt.dataset.serviceId) || 1 // Default to 1 if no ID
                 };
                 document.getElementById('toStep2').disabled = false;
             });
@@ -1761,7 +1762,7 @@
             document.getElementById('bookingSummary').innerHTML = html;
         }
 
-        document.getElementById('confirmBooking').addEventListener('click', () => {
+        document.getElementById('confirmBooking').addEventListener('click', async () => {
             const name = document.getElementById('clientName').value.trim();
             const phone = document.getElementById('clientPhone').value.trim();
             const code = document.getElementById('clientCode') ? document.getElementById('clientCode').value.trim() : '';
@@ -1770,7 +1771,44 @@
 
             const deposit = getDepositInfo(phone, code);
 
-            // Save booking
+            // Get business ID from URL or default to 1 (Upper Cuts)
+            const urlParams = new URLSearchParams(window.location.search);
+            const businessId = parseInt(urlParams.get('business') || urlParams.get('business_id') || '1');
+
+            try {
+                // Send booking to Netlify function
+                const response = await fetch('/.netlify/functions/booking-confirmation', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        business_id: businessId,
+                        name: name,
+                        phone: phone,
+                        email: '', // Optional field
+                        service_id: selectedService.id || 1, // Map service name to ID
+                        date: selectedDate,
+                        time: selectedTime,
+                        notes: notes
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(result.error || 'Booking failed');
+                }
+
+                console.log('Booking successful:', result);
+                
+            } catch (error) {
+                console.error('Booking error:', error);
+                alert('Sorry, there was an error processing your booking. Please try again or call directly.');
+                return;
+            }
+
+            // Also save to localStorage for backward compatibility
             const bookings = getBookings();
             bookings.push({
                 id: Date.now(),
@@ -1785,7 +1823,7 @@
                 notes,
                 createdAt: new Date().toISOString()
             });
-            saveBookings(bookings);
+            saveBookings();
 
             // Auto-register new clients
             if (deposit.type === 'new') {

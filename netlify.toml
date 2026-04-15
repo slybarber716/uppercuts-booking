@@ -1,7 +1,9 @@
 [build]
   publish = "."
-  command = "echo 'Static site - no build needed'"
   functions = "netlify/functions"
+
+[[plugins]]
+  package = "@netlify/plugin-functions-install-core"
 
 [context.production]
   environment = { TWILIO_ACCOUNT_SID = "ACc61eadec4b30d4072c3525bcbb5b4b97", TWILIO_AUTH_TOKEN = "84472de9154b883d14ec213fd892f858", TWILIO_PHONE = "+18559203566", SLY_PHONE = "+17703340126" }
@@ -24,11 +26,6 @@
 [[redirects]]
   from = "/api/booking-confirmation"
   to = "/.netlify/functions/booking-confirmation"
-  status = 200
-
-[[redirects]]
-  from = "/api/send-appointment-reminders"
-  to = "/.netlify/functions/send-appointment-reminders"
   status = 200
 
 [[headers]]

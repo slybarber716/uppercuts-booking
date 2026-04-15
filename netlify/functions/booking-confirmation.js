@@ -1,24 +1,21 @@
 // Netlify Function: booking-confirmation.js
-// Fires when a client books an appointment.
-// 1. Sends SMS confirmation to client with appointment details
-// 2. Stores booking for reminder scheduler
-// 3. Returns success to client
+// Multi-tenant version with database integration
+// 1. Stores booking in database
+// 2. Sends SMS confirmation to client with appointment details
+// 3. Logs SMS in database
+// 4. Returns success to client
 
 const https = require('https');
 const querystring = require('querystring');
+const database = require('../../database/db');
 
-const TWILIO_SID    = process.env.TWILIO_SID;
-const TWILIO_TOKEN  = process.env.TWILIO_TOKEN;
-const TWILIO_FROM   = process.env.TWILIO_FROM;   // +18559203566
-const SLY_PHONE     = process.env.SLY_PHONE;     // +17703340126
-
-function sendSMS(to, body) {
+function sendSMS(to, body, twilioConfig) {
     return new Promise((resolve, reject) => {
-        const data = querystring.stringify({ To: to, From: TWILIO_FROM, Body: body });
-        const auth = Buffer.from(`${TWILIO_SID}:${TWILIO_TOKEN}`).toString('base64');
+        const data = querystring.stringify({ To: to, From: twilioConfig.from, Body: body });
+        const auth = Buffer.from(`${twilioConfig.sid}:${twilioConfig.token}`).toString('base64');
         const options = {
             hostname: 'api.twilio.com',
-            path: `/2010-04-01/Accounts/${TWILIO_SID}/Messages.json`,
+            path: `/2010-04-01/Accounts/${twilioConfig.sid}/Messages.json`,
             method: 'POST',
             headers: {
                 'Authorization': `Basic ${auth}`,
@@ -29,7 +26,13 @@ function sendSMS(to, body) {
         const req = https.request(options, res => {
             let body = '';
             res.on('data', chunk => body += chunk);
-            res.on('end', () => resolve(JSON.parse(body)));
+            res.on('end', () => {
+                try {
+                    resolve(JSON.parse(body));
+                } catch (e) {
+                    resolve({ error: 'Invalid JSON response' });
+                }
+            });
         });
         req.on('error', reject);
         req.write(data);
@@ -49,57 +52,192 @@ exports.handler = async (event) => {
         return { statusCode: 400, body: 'Bad Request' };
     }
 
-    const { name, phone, service, date, time } = body;
+    const { 
+        business_id, 
+        name, 
+        phone, 
+        email,
+        service_id, 
+        date, 
+        time,
+        notes 
+    } = body;
 
-    if (!name || !phone || !service || !date || !time) {
-        return { statusCode: 400, body: 'Missing required fields' };
+    // Validate required fields
+    if (!business_id || !name || !phone || !service_id || !date || !time) {
+        return { 
+            statusCode: 400, 
+            body: JSON.stringify({ 
+                success: false, 
+                error: 'Missing required fields: business_id, name, phone, service_id, date, time' 
+            }) 
+        };
     }
 
-    // Format the confirmation message for client
-    const clientMsg = `✂️ APPOINTMENT CONFIRMED
+    try {
+        // Connect to database
+        await database.connect();
+
+        // Get business details
+        const business = await database.getBusinessById(business_id);
+        if (!business) {
+            return { 
+                statusCode: 404, 
+                body: JSON.stringify({ 
+                    success: false, 
+                    error: 'Business not found' 
+                }) 
+            };
+        }
+
+        // Get service details
+        const service = await database.get('SELECT * FROM services WHERE id = ? AND business_id = ?', 
+            [service_id, business_id]);
+        if (!service) {
+            return { 
+                statusCode: 404, 
+                body: JSON.stringify({ 
+                    success: false, 
+                    error: 'Service not found' 
+                }) 
+            };
+        }
+
+        // Check if time slot is available
+        const isAvailable = await database.isTimeSlotAvailable(business_id, date, time, service.duration_minutes);
+        if (!isAvailable) {
+            return { 
+                statusCode: 409, 
+                body: JSON.stringify({ 
+                    success: false, 
+                    error: 'Time slot is not available' 
+                }) 
+            };
+        }
+
+        // Get or create client
+        const client = await database.getOrCreateClient(business_id, name, phone, email);
+
+        // Create appointment
+        const appointment = await database.createAppointment(
+            business_id, 
+            client.id, 
+            service_id, 
+            date, 
+            time,
+            notes
+        );
+
+        // Prepare Twilio config
+        const twilioConfig = {
+            sid: business.twilio_sid,
+            token: business.twilio_token,
+            from: business.twilio_phone
+        };
+
+        // Format the confirmation message for client
+        const clientMsg = `✂️ APPOINTMENT CONFIRMED
     
 Hi ${name}!
 
-Your ${service} appointment is confirmed:
+Your ${service.name} appointment is confirmed:
 📅 ${date}
 🕐 ${time}
 
-Location: Upper Cuts Barbershop
-2179 Lawrenceville Hwy, Decatur, GA 30033
+Location: ${business.name}
+${business.address}
+${business.city}, ${business.state} ${business.zip_code}
 
-💳 Payment processed via Square at booking.
+💳 Payment: $${service.deposit_amount} deposit processed via Square.
 
 Please arrive 5 minutes early. Questions? Text us back!`;
 
-    // Notify Sly of the new booking
-    const slyMsg = `📱 NEW BOOKING
+        // Notify business owner of the new booking
+        const ownerMsg = `📱 NEW BOOKING
 
-${name} booked ${service}
+${name} booked ${service.name}
 📅 ${date} at ${time}
-📞 ${phone}`;
+📞 ${phone}
+💳 $${service.deposit_amount} deposit paid`;
 
-    try {
         // Send confirmation to client
-        await sendSMS(phone, clientMsg);
-        
-        // Notify Sly
-        await sendSMS(SLY_PHONE, slyMsg);
-        
+        let clientSmsResult;
+        try {
+            clientSmsResult = await sendSMS(phone, clientMsg, twilioConfig);
+            
+            // Log SMS in database
+            await database.logSMS(
+                business_id,
+                client.id,
+                'outbound',
+                'confirmation',
+                phone,
+                business.twilio_phone,
+                clientMsg,
+                clientSmsResult.sid
+            );
+        } catch (smsError) {
+            console.error('Error sending client SMS:', smsError);
+            clientSmsResult = { error: smsError.message };
+        }
+
+        // Send notification to business owner
+        let ownerSmsResult;
+        try {
+            ownerSmsResult = await sendSMS(business.phone, ownerMsg, twilioConfig);
+            
+            // Log SMS in database
+            await database.logSMS(
+                business_id,
+                client.id,
+                'outbound',
+                'notification',
+                business.phone,
+                business.twilio_phone,
+                ownerMsg,
+                ownerSmsResult.sid
+            );
+        } catch (smsError) {
+            console.error('Error sending owner SMS:', smsError);
+            ownerSmsResult = { error: smsError.message };
+        }
+
+        // Return success response
         return {
             statusCode: 200,
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type',
+                'Access-Control-Allow-Methods': 'POST'
+            },
             body: JSON.stringify({ 
                 success: true, 
-                message: 'Confirmation sent' 
+                appointment_id: appointment.id,
+                message: 'Appointment confirmed and SMS sent',
+                sms_status: {
+                    client: clientSmsResult.sid ? 'sent' : 'failed',
+                    owner: ownerSmsResult.sid ? 'sent' : 'failed'
+                }
             })
         };
-    } catch (err) {
-        console.error('Twilio error:', err);
+
+    } catch (error) {
+        console.error('Booking confirmation error:', error);
         return {
             statusCode: 500,
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
             body: JSON.stringify({ 
                 success: false, 
-                error: 'Failed to send confirmation' 
+                error: 'Internal server error',
+                message: error.message
             })
         };
+    } finally {
+        // Always close database connection
+        await database.close();
     }
 };
