@@ -1,6 +1,7 @@
 [build]
   publish = "."
   functions = "netlify/functions"
+  command = "echo 'Static site deployment'"
 
 [[plugins]]
   package = "@netlify/plugin-functions-install-core"
