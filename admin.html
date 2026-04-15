@@ -235,6 +235,113 @@
         .btn-add:hover { background: var(--gold-light); }
 
         .empty-state { text-align: center; padding: 60px; color: var(--text-muted); font-size: 15px; }
+
+        /* ADMIN BOOKING FORM */
+        .admin-booking-form {
+            background: var(--surface);
+            border: 1px solid rgba(201,169,110,0.15);
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 32px;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+        .form-group label {
+            font-family: 'Oswald', sans-serif;
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            display: block;
+            margin-bottom: 8px;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--dark);
+            border: 1px solid rgba(201,169,110,0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+        .form-group select option { background: var(--dark); }
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-start;
+        }
+        .btn-book {
+            padding: 14px 28px;
+            background: var(--gold);
+            color: var(--dark);
+            border: none;
+            border-radius: 8px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .btn-book:hover { background: var(--gold-light); }
+        .booking-result {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: none;
+        }
+        .booking-result.success {
+            background: rgba(76,175,80,0.15);
+            color: var(--success);
+            border: 1px solid rgba(76,175,80,0.3);
+        }
+        .booking-result.error {
+            background: rgba(231,76,60,0.15);
+            color: var(--danger);
+            border: 1px solid rgba(231,76,60,0.3);
+        }
+        .appointments-list {
+            background: var(--surface);
+            border: 1px solid rgba(201,169,110,0.15);
+            border-radius: 12px;
+            padding: 24px;
+        }
+        .appointment-item {
+            padding: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .appointment-item:last-child { border-bottom: none; }
+        .appointment-time {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 18px;
+            color: var(--gold);
+        }
+        .appointment-details {
+            flex: 1;
+            margin-left: 24px;
+        }
+        .appointment-name {
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+        .appointment-service {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -262,6 +369,7 @@
         <div class="tabs">
             <button class="tab active" onclick="switchTab('bookings', this)">Bookings</button>
             <button class="tab" onclick="switchTab('clients', this)">Clients</button>
+            <button class="tab" onclick="switchTab('admin-book', this)">Book Appointment</button>
         </div>
 
         <!-- BOOKINGS TAB -->
@@ -326,6 +434,92 @@
             </div>
         </div>
 
+        <!-- ADMIN BOOKING TAB -->
+        <div class="tab-panel" id="tab-admin-book">
+            <div class="admin-booking-form">
+                <h2 style="font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--gold); letter-spacing: 2px; margin-bottom: 24px;">Book Appointment for Client</h2>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Client Name</label>
+                        <input type="text" id="adminClientName" placeholder="Enter client name">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" id="adminClientPhone" placeholder="(xxx) xxx-xxxx">
+                    </div>
+                    <div class="form-group">
+                        <label>Service</label>
+                        <select id="adminService">
+                            <option value="">Select Service</option>
+                            <option value="Kids Cut">Kids Cut - $26</option>
+                            <option value="Teen Cut">Teen Cut - $30</option>
+                            <option value="Premium Cut">Premium Cut - $46</option>
+                            <option value="Signature Cut">Signature Cut - $60</option>
+                            <option value="Beard Trim">Beard Trim - $15</option>
+                            <option value="Eyebrows">Eyebrows - $16</option>
+                            <option value="Facial">Facial - $40</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="adminDate">
+                    </div>
+                    <div class="form-group">
+                        <label>Time</label>
+                        <select id="adminTime">
+                            <option value="">Select Time</option>
+                            <option value="9:00 AM">9:00 AM</option>
+                            <option value="9:30 AM">9:30 AM</option>
+                            <option value="10:00 AM">10:00 AM</option>
+                            <option value="10:30 AM">10:30 AM</option>
+                            <option value="11:00 AM">11:00 AM</option>
+                            <option value="11:30 AM">11:30 AM</option>
+                            <option value="12:00 PM">12:00 PM</option>
+                            <option value="12:30 PM">12:30 PM</option>
+                            <option value="1:00 PM">1:00 PM</option>
+                            <option value="1:30 PM">1:30 PM</option>
+                            <option value="2:00 PM">2:00 PM</option>
+                            <option value="2:30 PM">2:30 PM</option>
+                            <option value="3:00 PM">3:00 PM</option>
+                            <option value="3:30 PM">3:30 PM</option>
+                            <option value="4:00 PM">4:00 PM</option>
+                            <option value="4:30 PM">4:30 PM</option>
+                            <option value="5:00 PM">5:00 PM</option>
+                            <option value="5:30 PM">5:30 PM</option>
+                            <option value="6:00 PM">6:00 PM</option>
+                            <option value="6:30 PM">6:30 PM</option>
+                            <option value="7:00 PM">7:00 PM</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Deposit Amount</label>
+                        <select id="adminDeposit">
+                            <option value="0">No Deposit</option>
+                            <option value="8">Eyebrows - $8 (50%)</option>
+                            <option value="13">Kids Cut - $13 (50%)</option>
+                            <option value="15">Teen Cut/Beard - $15 (50%)</option>
+                            <option value="20">Facial - $20 (50%)</option>
+                            <option value="23">Premium Cut - $23 (50%)</option>
+                            <option value="30">Signature Cut - $30 (50%)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button class="btn-book" onclick="bookAppointment()">Book Appointment</button>
+                    <button class="btn-clear" onclick="clearForm()">Clear Form</button>
+                </div>
+                
+                <div id="bookingResult" class="booking-result"></div>
+            </div>
+            
+            <div class="upcoming-appointments">
+                <h3 style="font-family: 'Oswald', sans-serif; font-size: 18px; letter-spacing: 1px; color: var(--gold); margin: 32px 0 16px;">Today's Appointments</h3>
+                <div id="todayAppointments" class="appointments-list"></div>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -374,6 +568,7 @@
         renderBookings();
         renderClients();
         renderStats();
+        renderTodayAppointments();
     }
 
     function renderStats() {
@@ -497,6 +692,119 @@
         document.getElementById('newClientPhone').value = '';
         renderAll();
     }
+
+    // ADMIN BOOKING FUNCTIONS
+    function bookAppointment() {
+        const name = document.getElementById('adminClientName').value.trim();
+        const phone = document.getElementById('adminClientPhone').value.trim().replace(/\D/g, '');
+        const service = document.getElementById('adminService').value;
+        const date = document.getElementById('adminDate').value;
+        const time = document.getElementById('adminTime').value;
+        const deposit = parseInt(document.getElementById('adminDeposit').value) || 0;
+
+        // Validation
+        if (!name || !phone || !service || !date || !time) {
+            showBookingResult('Please fill in all required fields.', 'error');
+            return;
+        }
+
+        // Format phone number
+        const formattedPhone = phone.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
+
+        // Create booking object
+        const booking = {
+            id: Date.now(),
+            name: name,
+            phone: formattedPhone,
+            service: service,
+            date: new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+            time: time,
+            depositAmount: deposit,
+            depositPaid: deposit === 0, // Mark as paid if no deposit required
+            status: 'new',
+            timestamp: new Date().toISOString()
+        };
+
+        // Save booking
+        const bookings = getBookings();
+        bookings.push(booking);
+        saveBookings(bookings);
+
+        // Update client status
+        const clients = getClients();
+        const names = getClientNames();
+        clients[phone] = clients[phone] || 'regular'; // Keep existing status or set to regular
+        names[phone] = name;
+        saveClients(clients);
+        saveClientNames(names);
+
+        // Show success message
+        showBookingResult(`Appointment booked for ${name} on ${booking.date} at ${time}.`, 'success');
+
+        // Clear form
+        clearForm();
+
+        // Refresh displays
+        renderAll();
+        renderTodayAppointments();
+    }
+
+    function clearForm() {
+        document.getElementById('adminClientName').value = '';
+        document.getElementById('adminClientPhone').value = '';
+        document.getElementById('adminService').value = '';
+        document.getElementById('adminDate').value = '';
+        document.getElementById('adminTime').value = '';
+        document.getElementById('adminDeposit').value = '0';
+    }
+
+    function showBookingResult(message, type) {
+        const resultDiv = document.getElementById('bookingResult');
+        resultDiv.textContent = message;
+        resultDiv.className = `booking-result ${type}`;
+        resultDiv.style.display = 'block';
+        
+        // Hide after 5 seconds
+        setTimeout(() => {
+            resultDiv.style.display = 'none';
+        }, 5000);
+    }
+
+    function renderTodayAppointments() {
+        const today = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        const bookings = getBookings().filter(b => b.date === today);
+        const container = document.getElementById('todayAppointments');
+        
+        if (bookings.length === 0) {
+            container.innerHTML = '<div class="empty-state" style="padding: 40px;">No appointments for today.</div>';
+            return;
+        }
+
+        // Sort by time
+        bookings.sort((a, b) => {
+            const timeA = new Date('2000/01/01 ' + a.time);
+            const timeB = new Date('2000/01/01 ' + b.time);
+            return timeA - timeB;
+        });
+
+        container.innerHTML = bookings.map(apt => `
+            <div class="appointment-item">
+                <div class="appointment-time">${apt.time}</div>
+                <div class="appointment-details">
+                    <div class="appointment-name">${apt.name}</div>
+                    <div class="appointment-service">${apt.service} ${apt.depositAmount > 0 && !apt.depositPaid ? '• Deposit: $' + apt.depositAmount + ' owed' : ''}</div>
+                </div>
+                <div>${badgeHTML(apt.status)}</div>
+            </div>
+        `).join('');
+    }
+
+    // Set default date to today
+    document.addEventListener('DOMContentLoaded', function() {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('adminDate').value = today;
+        renderTodayAppointments();
+    });
 </script>
 </body>
 </html>

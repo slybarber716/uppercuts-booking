@@ -286,6 +286,182 @@
             font-size: 24px;
         }
 
+        /* ===== DEMO VIDEO SECTION ===== */
+        .demo {
+            padding: 100px 0;
+            background: var(--surface);
+            position: relative;
+            overflow: hidden;
+        }
+        .demo::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 50%, rgba(201, 169, 110, 0.03) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 30%, rgba(201, 169, 110, 0.02) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .demo-header {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+            z-index: 2;
+        }
+        .demo-container {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 60px;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+        .demo-canvas-container {
+            background: var(--primary-dark);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(201, 169, 110, 0.2);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        .demo-canvas-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary-accent), transparent);
+            animation: scanline 3s ease-in-out infinite;
+        }
+        @keyframes scanline {
+            0%, 100% { transform: translateX(-100%); }
+            50% { transform: translateX(100%); }
+        }
+        #demoCanvas {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            background: #0a0a0a;
+            display: block;
+        }
+        .demo-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-top: 20px;
+            padding: 16px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            border: 1px solid rgba(201, 169, 110, 0.1);
+        }
+        .demo-btn {
+            background: var(--primary-accent);
+            color: var(--text-dark);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .demo-btn:hover {
+            background: var(--secondary-accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(201, 169, 110, 0.3);
+        }
+        .demo-btn:active {
+            transform: translateY(0);
+        }
+        .demo-step {
+            margin-left: auto;
+            font-family: 'Oswald', sans-serif;
+            font-size: 12px;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+        .demo-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .demo-step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            padding: 24px;
+            background: var(--primary-dark);
+            border: 1px solid rgba(201, 169, 110, 0.1);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .demo-step-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(201, 169, 110, 0.1), transparent);
+            transition: width 0.6s ease;
+        }
+        .demo-step-item:hover::before {
+            width: 100%;
+        }
+        .demo-step-item:hover {
+            border-color: var(--primary-accent);
+            transform: translateX(4px);
+        }
+        .demo-step-item.active {
+            border-color: var(--primary-accent);
+            background: rgba(201, 169, 110, 0.05);
+        }
+        .demo-step-item.active .step-number {
+            background: var(--primary-accent);
+            color: var(--text-dark);
+            transform: scale(1.1);
+        }
+        .step-number {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(201, 169, 110, 0.1);
+            color: var(--primary-accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Oswald', sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+        .step-content h4 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 18px;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+        .step-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin: 0;
+        }
+
         /* ===== SERVICES ===== */
         .services {
             padding: 100px 0;
@@ -1159,6 +1335,65 @@
         <div class="scroll-indicator">&#8964;</div>
     </section>
 
+    <!-- HOW IT WORKS - CINEMATIC DEMO -->
+    <section class="demo" id="how-it-works">
+        <div class="container">
+            <div class="demo-header fade-in">
+                <p class="section-label">How It Works</p>
+                <h2 class="section-heading">See SuiteSeat In Action</h2>
+                <div class="gold-line"></div>
+            </div>
+            <div class="demo-container fade-in">
+                <div class="demo-canvas-container">
+                    <canvas id="demoCanvas" width="900" height="540"></canvas>
+                    <div class="demo-controls">
+                        <button id="demoPlay" class="demo-btn">▶ Play</button>
+                        <button id="demoPause" class="demo-btn">⏸ Pause</button>
+                        <button id="demoReset" class="demo-btn">⟲ Reset</button>
+                        <span id="demoStep" class="demo-step">Step 1 of 5</span>
+                    </div>
+                </div>
+                <div class="demo-steps">
+                    <div class="demo-step-item active" data-step="1">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Client Discovers Your Booking Page</h4>
+                            <p>Available time slots automatically appear based on your real availability</p>
+                        </div>
+                    </div>
+                    <div class="demo-step-item" data-step="2">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Time Selection</h4>
+                            <p>Clients pick their preferred time with instant confirmation</p>
+                        </div>
+                    </div>
+                    <div class="demo-step-item" data-step="3">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>QR Check-In</h4>
+                            <p>Clients scan QR code when they arrive at your suite</p>
+                        </div>
+                    </div>
+                    <div class="demo-step-item" data-step="4">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h4>Instant SMS Alert</h4>
+                            <p>You get notified immediately with client details</p>
+                        </div>
+                    </div>
+                    <div class="demo-step-item" data-step="5">
+                        <div class="step-number">5</div>
+                        <div class="step-content">
+                            <h4>Ready Response</h4>
+                            <p>Reply "READY" and client gets notified to come in</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- SERVICES -->
     <section class="services" id="services">
         <div class="container">
@@ -1920,6 +2155,409 @@
         document.querySelectorAll('.quick-reply').forEach(btn => {
             btn.addEventListener('click', () => handleChat(btn.dataset.msg));
         });
+
+        // ===== DEMO VIDEO ANIMATION =====
+        class DemoVideo {
+            constructor() {
+                this.canvas = document.getElementById('demoCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.currentStep = 1;
+                this.totalSteps = 5;
+                this.isPlaying = false;
+                this.animationId = null;
+                this.stepStartTime = 0;
+                this.stepDuration = 4000; // 4 seconds per step
+                
+                this.init();
+                this.setupControls();
+                this.animate();
+            }
+            
+            init() {
+                // Set canvas size
+                const rect = this.canvas.getBoundingClientRect();
+                const dpr = window.devicePixelRatio || 1;
+                this.canvas.width = 900 * dpr;
+                this.canvas.height = 540 * dpr;
+                this.ctx.scale(dpr, dpr);
+                this.canvas.style.width = '100%';
+                this.canvas.style.height = 'auto';
+                
+                // Update step indicator
+                this.updateStepIndicator();
+            }
+            
+            setupControls() {
+                document.getElementById('demoPlay').addEventListener('click', () => this.play());
+                document.getElementById('demoPause').addEventListener('click', () => this.pause());
+                document.getElementById('demoReset').addEventListener('click', () => this.reset());
+                
+                // Step item clicks
+                document.querySelectorAll('.demo-step-item').forEach((item, index) => {
+                    item.addEventListener('click', () => {
+                        this.currentStep = index + 1;
+                        this.stepStartTime = performance.now();
+                        this.updateStepIndicator();
+                    });
+                });
+            }
+            
+            play() {
+                this.isPlaying = true;
+                if (!this.animationId) {
+                    this.animate();
+                }
+            }
+            
+            pause() {
+                this.isPlaying = false;
+                if (this.animationId) {
+                    cancelAnimationFrame(this.animationId);
+                    this.animationId = null;
+                }
+            }
+            
+            reset() {
+                this.currentStep = 1;
+                this.stepStartTime = performance.now();
+                this.updateStepIndicator();
+                this.drawStep1();
+            }
+            
+            updateStepIndicator() {
+                document.getElementById('demoStep').textContent = `Step ${this.currentStep} of ${this.totalSteps}`;
+                
+                // Update active step item
+                document.querySelectorAll('.demo-step-item').forEach((item, index) => {
+                    item.classList.toggle('active', index + 1 === this.currentStep);
+                });
+            }
+            
+            animate() {
+                const now = performance.now();
+                const elapsed = now - this.stepStartTime;
+                
+                if (this.isPlaying && elapsed > this.stepDuration) {
+                    this.currentStep = (this.currentStep % this.totalSteps) + 1;
+                    this.stepStartTime = now;
+                    this.updateStepIndicator();
+                }
+                
+                // Clear canvas
+                this.ctx.fillStyle = '#0a0a0a';
+                this.ctx.fillRect(0, 0, 900, 540);
+                
+                // Draw current step
+                switch(this.currentStep) {
+                    case 1:
+                        this.drawStep1();
+                        break;
+                    case 2:
+                        this.drawStep2();
+                        break;
+                    case 3:
+                        this.drawStep3();
+                        break;
+                    case 4:
+                        this.drawStep4();
+                        break;
+                    case 5:
+                        this.drawStep5();
+                        break;
+                }
+                
+                if (this.isPlaying) {
+                    this.animationId = requestAnimationFrame(() => this.animate());
+                }
+            }
+            
+            drawStep1() {
+                // Booking page discovery
+                const progress = (performance.now() - this.stepStartTime) / this.stepDuration;
+                const opacity = Math.min(1, progress * 2);
+                
+                // Background gradient
+                const gradient = this.ctx.createLinearGradient(0, 0, 900, 540);
+                gradient.addColorStop(0, `rgba(26, 26, 46, ${opacity})`);
+                gradient.addColorStop(1, `rgba(10, 10, 10, ${opacity})`);
+                this.ctx.fillStyle = gradient;
+                this.ctx.fillRect(0, 0, 900, 540);
+                
+                // Booking interface
+                this.ctx.fillStyle = `rgba(17, 17, 17, ${opacity})`;
+                this.ctx.fillRect(50, 50, 800, 440);
+                
+                // Gold border
+                this.ctx.strokeStyle = `rgba(201, 169, 110, ${opacity * 0.5})`;
+                this.ctx.lineWidth = 2;
+                this.ctx.strokeRect(50, 50, 800, 440);
+                
+                // Title
+                this.ctx.fillStyle = `rgba(201, 169, 110, ${opacity})`;
+                this.ctx.font = 'bold 32px Oswald';
+                this.ctx.fillText('BOOK YOUR APPOINTMENT', 100, 120);
+                
+                // Time slots appearing
+                const slots = ['9:00 AM', '10:00 AM', '11:00 AM', '2:00 PM', '3:00 PM'];
+                slots.forEach((slot, i) => {
+                    const slotOpacity = Math.max(0, opacity - i * 0.2);
+                    if (slotOpacity > 0) {
+                        this.ctx.fillStyle = `rgba(201, 169, 110, ${slotOpacity * 0.1})`;
+                        this.ctx.fillRect(100 + i * 140, 180, 120, 60);
+                        
+                        this.ctx.fillStyle = `rgba(201, 169, 110, ${slotOpacity})`;
+                        this.ctx.font = '16px Inter';
+                        this.ctx.fillText(slot, 115 + i * 140, 215);
+                    }
+                });
+                
+                // Client cursor
+                if (progress > 0.5) {
+                    const cursorX = 160 + Math.sin(progress * 3) * 140;
+                    const cursorY = 210;
+                    this.ctx.fillStyle = `rgba(255, 255, 255, ${Math.sin(progress * 10) * 0.5 + 0.5})`;
+                    this.ctx.beginPath();
+                    this.ctx.arc(cursorX, cursorY, 8, 0, Math.PI * 2);
+                    this.ctx.fill();
+                }
+            }
+            
+            drawStep2() {
+                // Time selection
+                const progress = (performance.now() - this.stepStartTime) / this.stepDuration;
+                
+                this.drawStep1(); // Base
+                
+                // Highlight selected time
+                this.ctx.strokeStyle = '#4CAF50';
+                this.ctx.lineWidth = 3;
+                this.ctx.strokeRect(240, 175, 130, 70);
+                
+                // Checkmark animation
+                if (progress > 0.3) {
+                    const checkProgress = Math.min(1, (progress - 0.3) * 2);
+                    this.ctx.strokeStyle = `#4CAF50`;
+                    this.ctx.lineWidth = 4;
+                    this.ctx.lineCap = 'round';
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(280, 205);
+                    this.ctx.lineTo(290, 215);
+                    this.ctx.lineTo(310, 195);
+                    this.ctx.stroke();
+                }
+                
+                // Confirmation popup
+                if (progress > 0.6) {
+                    const popupOpacity = Math.min(1, (progress - 0.6) * 3);
+                    this.ctx.fillStyle = `rgba(17, 17, 17, ${popupOpacity})`;
+                    this.ctx.fillRect(300, 250, 300, 120);
+                    
+                    this.ctx.strokeStyle = `rgba(76, 175, 80, ${popupOpacity})`;
+                    this.ctx.strokeRect(300, 250, 300, 120);
+                    
+                    this.ctx.fillStyle = `rgba(76, 175, 80, ${popupOpacity})`;
+                    this.ctx.font = 'bold 20px Inter';
+                    this.ctx.fillText('Time Confirmed!', 380, 290);
+                    
+                    this.ctx.fillStyle = `rgba(255, 255, 255, ${popupOpacity})`;
+                    this.ctx.font = '14px Inter';
+                    this.ctx.fillText('2:00 PM - Monday, Jan 15', 350, 320);
+                    this.ctx.fillText('See you soon!', 380, 340);
+                }
+            }
+            
+            drawStep3() {
+                // QR Check-in
+                const progress = (performance.now() - this.stepStartTime) / this.stepDuration;
+                
+                // Phone screen
+                this.ctx.fillStyle = '#1a1a2e';
+                this.ctx.fillRect(300, 100, 300, 340);
+                this.ctx.strokeStyle = '#333';
+                this.ctx.lineWidth = 4;
+                this.ctx.strokeRect(300, 100, 300, 340);
+                
+                // QR Code visualization
+                const qrSize = 180;
+                const qrX = 360;
+                const qrY = 180;
+                
+                // QR background
+                this.ctx.fillStyle = '#fff';
+                this.ctx.fillRect(qrX - 10, qrY - 10, qrSize + 20, qrSize + 20);
+                
+                // QR pattern
+                this.ctx.fillStyle = '#000';
+                const cellSize = qrSize / 12;
+                for (let row = 0; row < 12; row++) {
+                    for (let col = 0; col < 12; col++) {
+                        if (Math.random() > 0.4) {
+                            this.ctx.fillRect(qrX + col * cellSize, qrY + row * cellSize, cellSize - 1, cellSize - 1);
+                        }
+                    }
+                }
+                
+                // Scanning line
+                if (progress > 0.2) {
+                    const scanY = qrY + ((progress - 0.2) * 2 % 1) * qrSize;
+                    this.ctx.strokeStyle = `rgba(76, 175, 80, ${0.8})`;
+                    this.ctx.lineWidth = 3;
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(qrX - 10, scanY);
+                    this.ctx.lineTo(qrX + qrSize + 10, scanY);
+                    this.ctx.stroke();
+                }
+                
+                // Instructions
+                this.ctx.fillStyle = '#C9A96E';
+                this.ctx.font = 'bold 18px Inter';
+                this.ctx.fillText('SCAN TO CHECK IN', 370, 420);
+                
+                // Check-in success
+                if (progress > 0.7) {
+                    this.ctx.fillStyle = 'rgba(76, 175, 80, 0.9)';
+                    this.ctx.font = 'bold 24px Inter';
+                    this.ctx.fillText('✓ CHECKED IN', 360, 460);
+                }
+            }
+            
+            drawStep4() {
+                // SMS Alert
+                const progress = (performance.now() - this.stepStartTime) / this.stepDuration;
+                
+                // Phone notification
+                this.ctx.fillStyle = '#1a1a2e';
+                this.ctx.fillRect(100, 150, 280, 240);
+                this.ctx.strokeStyle = '#333';
+                this.ctx.lineWidth = 2;
+                this.ctx.strokeRect(100, 150, 280, 240);
+                
+                // Notification header
+                this.ctx.fillStyle = '#C9A96E';
+                this.ctx.fillRect(100, 150, 280, 50);
+                this.ctx.fillStyle = '#000';
+                this.ctx.font = 'bold 16px Inter';
+                this.ctx.fillText('SuiteSeat Alert', 120, 180);
+                
+                // Message content
+                this.ctx.fillStyle = '#fff';
+                this.ctx.font = '14px Inter';
+                let y = 220;
+                const lines = [
+                    'NEW APPOINTMENT',
+                    '',
+                    '👤 John Smith',
+                    '📞 (404) 555-0123',
+                    '✂️ Premium Cut',
+                    '📅 Today 2:00 PM',
+                    '',
+                    'Reply READY when set'
+                ];
+                
+                lines.forEach(line => {
+                    this.ctx.fillText(line, 120, y);
+                    y += 20;
+                });
+                
+                // Pulse effect on notification
+                if (progress > 0.3 && progress < 0.6) {
+                    const pulse = Math.sin(progress * 10) * 0.3 + 0.7;
+                    this.ctx.strokeStyle = `rgba(201, 169, 110, ${pulse})`;
+                    this.ctx.lineWidth = 4;
+                    this.ctx.strokeRect(95, 145, 290, 250);
+                }
+            }
+            
+            drawStep5() {
+                // Two phones - owner reply and client notification
+                const progress = (performance.now() - this.stepStartTime) / this.stepDuration;
+                
+                // Owner phone (left)
+                this.ctx.fillStyle = '#1a1a2e';
+                this.ctx.fillRect(200, 180, 200, 180);
+                this.ctx.strokeStyle = '#333';
+                this.ctx.strokeRect(200, 180, 200, 180);
+                
+                // Text input on owner phone
+                this.ctx.fillStyle = '#0a0a0a';
+                this.ctx.fillRect(210, 280, 180, 40);
+                this.ctx.strokeStyle = '#C9A96E';
+                this.ctx.strokeRect(210, 280, 180, 40);
+                
+                // "READY" text appearing
+                if (progress > 0.2) {
+                    const textOpacity = Math.min(1, (progress - 0.2) * 3);
+                    this.ctx.fillStyle = `rgba(255, 255, 255, ${textOpacity})`;
+                    this.ctx.font = 'bold 18px Inter';
+                    this.ctx.fillText('READY', 280, 305);
+                }
+                
+                // Send button
+                if (progress > 0.4) {
+                    this.ctx.fillStyle = '#C9A96E';
+                    this.ctx.fillRect(350, 285, 30, 30);
+                    this.ctx.fillStyle = '#000';
+                    this.ctx.font = 'bold 16px Inter';
+                    this.ctx.fillText('→', 360, 305);
+                }
+                
+                // Client phone (right)
+                this.ctx.fillStyle = '#1a1a2e';
+                this.ctx.fillRect(500, 180, 200, 180);
+                this.ctx.strokeStyle = '#333';
+                this.ctx.strokeRect(500, 180, 200, 180);
+                
+                // Client notification
+                if (progress > 0.6) {
+                    const notifOpacity = Math.min(1, (progress - 0.6) * 3);
+                    
+                    // Notification bubble
+                    this.ctx.fillStyle = `rgba(76, 175, 80, ${notifOpacity})`;
+                    this.ctx.fillRect(510, 200, 180, 80);
+                    
+                    this.ctx.fillStyle = '#fff';
+                    this.ctx.font = 'bold 14px Inter';
+                    this.ctx.fillText('Sly is ready for you!', 530, 230);
+                    this.ctx.font = '12px Inter';
+                    this.ctx.fillText('Head to the suite now', 530, 250);
+                    this.ctx.fillText('🎯', 650, 240);
+                }
+                
+                // Connection line
+                if (progress > 0.4 && progress < 0.8) {
+                    const lineOpacity = Math.sin(progress * 5) * 0.5 + 0.5;
+                    this.ctx.strokeStyle = `rgba(201, 169, 110, ${lineOpacity})`;
+                    this.ctx.lineWidth = 3;
+                    this.ctx.setLineDash([10, 5]);
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(400, 300);
+                    this.ctx.lineTo(500, 300);
+                    this.ctx.stroke();
+                    this.ctx.setLineDash([]);
+                }
+            }
+        }
+        
+        // Initialize demo video
+        const demoVideo = new DemoVideo();
+        
+        // Auto-play on scroll
+        const observerOptions = {
+            threshold: 0.3,
+            rootMargin: '0px 0px -100px 0px'
+        };
+        
+        const demoObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    demoVideo.play();
+                } else {
+                    demoVideo.pause();
+                }
+            });
+        }, observerOptions);
+        
+        demoObserver.observe(document.getElementById('how-it-works'));
     </script>
 </body>
 </html>
