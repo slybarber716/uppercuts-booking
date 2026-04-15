@@ -13,7 +13,7 @@ Looking for 5 suite owners to test my new booking system:
 ✅ Payment deposits (reduce no-shows)
 ✅ Smart scheduling & analytics
 
-FREE FOR LIFE for the first 5 beta testers!
+First month FREE + 1 free month for every friend you refer!
 
 DM me or email: concierge@suiteseatbooking.com
 
@@ -36,7 +36,7 @@ Looking for 5 suite owners to beta test:
 → Payment deposits
 → Smart booking
 
-First 5 get it FREE FOR LIFE
+First month FREE + 1 free month per referral
 
 Email: concierge@suiteseatbooking.com
 #SuiteOwnerProblems #BookingSolution
@@ -53,7 +53,7 @@ So I built SuiteSeat - a smart booking system for suite owners.
 ✅ Payment deposits upfront
 ✅ Professional booking page
 
-Looking for 5 beta testers → FREE FOR LIFE
+Looking for 5 beta testers → First month FREE + 1 month per referral
 
 Email: concierge@suiteseatbooking.com
 
@@ -97,7 +97,8 @@ BETA TESTING:
 Looking for 5 suite owners to test it out.
 
 WHAT YOU GET:
-→ Free access for life (normally $29/month)
+→ First month FREE (normally $29/month)
+→ 1 free month for every friend you refer
 → Personal setup help from me
 → Direct input on new features
 → First access to premium features
@@ -130,7 +131,7 @@ I built a booking system that handles:
 → Payment deposits (bye bye no-shows)
 → Professional booking page
 
-Looking for 5 beta testers - free for life in exchange for feedback.
+Looking for 5 beta testers - first month free + 1 month per referral in exchange for feedback.
 
 Interested? Email me: concierge@suiteseatbooking.com
 
@@ -141,7 +142,7 @@ Interested? Email me: concierge@suiteseatbooking.com
 ```
 Hey! Working on a booking system for suite owners. QR check-in, SMS reminders, payment deposits - the works.
 
-Looking for 5 beta testers, free for life. Interested?
+Looking for 5 beta testers, first month free + 1 month per referral. Interested?
 
 Email: concierge@suiteseatbooking.com
 ```
