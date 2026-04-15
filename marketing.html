@@ -472,6 +472,38 @@
         </div>
     </section>
 
+    <!-- Email Capture -->
+    <section class="email-capture" style="padding: 100px 0; background: var(--surface);">
+        <div class="container">
+            <div style="text-align: center; max-width: 700px; margin: 0 auto;">
+                <h2 style="color: var(--gold); margin-bottom: 20px; font-size: 36px;">Get Started Free</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 40px; font-size: 18px;">
+                    Join hundreds of suite owners who've streamlined their bookings. Start your 30-day free trial - no credit card required.
+                </p>
+                
+                <form id="emailSignup" style="margin-bottom: 20px;">
+                    <div style="display: flex; gap: 15px; max-width: 500px; margin: 0 auto 15px;">
+                        <input type="email" id="emailInput" placeholder="Enter your email address" required 
+                               style="flex: 1; padding: 18px 20px; border: 2px solid var(--gold); 
+                                      background: var(--primary-dark); color: var(--text-primary); 
+                                      border-radius: 8px; font-size: 16px; outline: none;">
+                        <button type="submit" style="background: var(--gold); color: var(--primary-dark); 
+                                                   border: none; padding: 18px 30px; border-radius: 8px; 
+                                                   font-weight: 600; font-size: 16px; cursor: pointer;
+                                                   transition: all 0.3s ease; min-width: 160px;">
+                            Start Free Trial
+                        </button>
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 14px;">
+                        Free 30-day trial • Cancel anytime • Unsubscribe anytime
+                    </p>
+                </form>
+                
+                <div id="signupMessage" style="display: none; margin-top: 20px; padding: 15px; border-radius: 6px; font-weight: 500;"></div>
+            </div>
+        </div>
+    </section>
+
     <!-- CTA -->
     <section class="cta">
         <div class="container">
@@ -721,6 +753,83 @@
         window.addEventListener('load', () => {
             setTimeout(() => demoVideo.play(), 1000);
         });
+
+        // Email Capture Functionality
+        document.getElementById('emailSignup').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('emailInput').value;
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const messageDiv = document.getElementById('signupMessage');
+            
+            // Validate email
+            if (!email || !email.includes('@')) {
+                showMessage('Please enter a valid email address', 'error');
+                return;
+            }
+            
+            // Disable button and show loading
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Signing up...';
+            hideMessage();
+            
+            try {
+                const response = await fetch('/.netlify/functions/email-capture', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        source: 'marketing_page'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showMessage(result.message || 'Thanks! Check your email for next steps.', 'success');
+                    document.getElementById('emailInput').value = '';
+                    
+                    // Track conversion (if you have analytics)
+                    if (typeof gtag !== 'undefined') {
+                        gtag('event', 'conversion', {
+                            'send_to': 'AW-CONVERSION_ID/SIGNUP_LABEL'
+                        });
+                    }
+                } else {
+                    showMessage(result.error || 'Something went wrong. Please try again.', 'error');
+                }
+                
+            } catch (error) {
+                console.error('Signup error:', error);
+                showMessage('Network error. Please try again in a moment.', 'error');
+            } finally {
+                // Re-enable button
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Start Free Trial';
+            }
+        });
+        
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('signupMessage');
+            messageDiv.textContent = message;
+            messageDiv.style.display = 'block';
+            
+            if (type === 'success') {
+                messageDiv.style.background = 'rgba(76, 175, 80, 0.1)';
+                messageDiv.style.color = '#4CAF50';
+                messageDiv.style.border = '1px solid #4CAF50';
+            } else {
+                messageDiv.style.background = 'rgba(244, 67, 54, 0.1)';
+                messageDiv.style.color = '#F44336';
+                messageDiv.style.border = '1px solid #F44336';
+            }
+        }
+        
+        function hideMessage() {
+            document.getElementById('signupMessage').style.display = 'none';
+        }
     </script>
 </body>
 </html>
